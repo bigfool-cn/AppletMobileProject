@@ -35,27 +35,33 @@
 ```shell
 # 下载源码
 wget http://www.xunsearch.com/scws/down/scws-1.2.3.tar.bz2
+
 # 解压缩
 tar xvjf scws-1.2.3.tar.bz2
+
 # 编译安装
 cd scws-1.2.3
 ./configure --prefix=/usr/local/scws
 make && make install
+
 # 检查是否安装成功
 ls -al /usr/local/scws/lib/libscws.la
 /usr/local/scws/bin/scws -h
+
 # 下载通用词典
 cd /usr/local/scws/etc
 wget http://www.xunsearch.com/scws/down/scws-dict-chs-gbk.tar.bz2
 wget http://www.xunsearch.com/scws/down/scws-dict-chs-utf8.tar.bz2
 tar xvjf scws-dict-chs-gbk.tar.bz2
 tar xvjf scws-dict-chs-utf8.tar.bz2
+
 #编译扩展
 apt-get install autoconf
 cd /root/scws-1.2.3/phpext
 phpize
 ./configure --with-scws=/usr/local/scws --with-php-config=/usr/local/bin/php-config
 make && make install
+
 # 加入配置文件中php.ini
 [scws]
 extension=scws.so
