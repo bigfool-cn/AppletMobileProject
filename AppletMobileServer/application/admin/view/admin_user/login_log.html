@@ -1,0 +1,91 @@
+{extend name="base" /}
+{block name="title"}
+<title>管理员登录日志列表</title>
+{/block}
+{block name="css"}
+<style>
+    .layui-laypage a, .layui-laypage span{
+        height: 35px;
+        line-height: 35px;
+        font-size: 14px;
+    }
+    .layui-laypage-curr{
+        font-size: 14px !important;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="javascript:void(0);">管理员管理</a>
+        <a href="javascript:void(0);">管理员登录日志列表</a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" action="{:url('/admin/loginlog')}">
+            <input class="layui-input" placeholder="开始日" name="start" id="start">
+            <input class="layui-input" placeholder="截止日" name="end" id="end">
+            <button class="layui-btn"  lay-submit="" lay-filter="sreach" style="margin-bottom: 2px;"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$pages->total()} 条</span>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>序号</th>
+            <th>用户名</th>
+            <th>IP</th>
+            <th>地址</th>
+            <th>登录时间</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {volist name="admin_logs" id="admin_log"}
+        <tr>
+            <td>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id={$admin_log.admin_log_id}><i class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{$pages->currentPage()*$pages->listRows()-$pages->listRows()+$i}</td>
+            <td>{$admin_log.username}</td>
+            <td>{$admin_log.ip}</td>
+            <td>{$admin_log.address}</td>
+            <td>{$admin_log.login_time | date="Y-m-d H:i:s"}</td>
+            <td class="td-manage">
+               xx
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    {include file="page" /}
+</div>
+{/block}
+{block name="js"}
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end', //指定元素
+            type: 'datetime'
+        });
+    });
+</script>
+<![endif]-->
+{/block}

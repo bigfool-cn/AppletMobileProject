@@ -1,0 +1,44 @@
+<!--pages/goods/goods.wxml-->
+<view >
+  <view class="page__bd">
+    <view class="weui-search-bar">
+        <view class="weui-search-bar__form">
+            <view class="weui-search-bar__box">
+                <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+                <input type="text" class="weui-search-bar__input" placeholder="搜索" 
+                  value="{{inputVal}}" focus="{{inputShowed}}" bindinput="inputTyping" bindconfirm="clickSearch"/>
+                <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}" bindtap="clearInput">
+                    <icon type="clear" size="14"></icon>
+                </view>
+            </view>
+            <label class="weui-search-bar__label" hidden="{{inputShowed}}" bindtap="showInput">
+                <icon class="weui-icon-search" type="search" size="14"></icon>
+                <view class="weui-search-bar__text">搜索</view>
+            </label>
+        </view>
+        <view class="weui-search-bar__cancel-btn search-qx" hidden="{{!inputShowed}}" bindtap="hideInput">取消</view>
+    </view>
+  </view>
+  <view class='goods'>
+    <view class='goods-item' wx:for="{{goodsList}}" wx:key='unique' data-id='{{item.goods_id}}' bindtap='goGoodsDetail'>
+      <image src='{{item.goods_image_url}}'class='goods_image'></image>
+      <view class='goods-item-right'>
+        <view class='goods_name'>
+          <text>{{item.goods_desc}}</text>
+        </view>
+        <view class='goods-item-rb'>
+          <view>
+            <text class='goods-sprice'>¥{{item.goods_sprice}}</text>
+            <text class='goods-pm'>{{item.count}}人付款</text>
+          </view>
+          <image src='/image/add-cart.png' class='join-cart' 
+            data-id="{{item.goods_id}}"  data-title="{{item.goods_name}}"
+            data-price="{{item.goods_sprice}}" data-image="{{item.goods_image_url}}"
+            catchtap='addCart'>
+          </image>
+        </view>
+      </view>
+    </view>
+  </view>
+  <loadMore loadMore="{{loadMore}}" loading="{{loading}}" notData="{{notData}}"></loadMore>
+</view>

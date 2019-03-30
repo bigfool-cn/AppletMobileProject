@@ -1,0 +1,31 @@
+page{
+  background: white;
+}
+.weui-cell{
+  border-top: 1rpx #d9d9d9 solid;
+}
+.weui-label{
+  font-size: 30rpx;
+  color: #3a3a3a;
+}
+.weui-input{
+  height: 35rpx;
+  line-height: 35rpx;
+  font-size: 30rpx;
+  color: #3a3a3a;
+}
+.weui-select{
+  font-size: 30rpx;
+  color: #3a3a3a;
+}
+.weui-textarea{
+  font-size: 30rpx;
+  color: #3a3a3a;
+}
+.select-mr{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10rpx 0 10rpx 0;
+  border-bottom: 1rpx #d9d9d9 solid;
+}

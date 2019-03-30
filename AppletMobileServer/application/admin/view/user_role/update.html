@@ -1,0 +1,79 @@
+{extend name="base" /}
+{block name="title"}
+<title>修改用户角色</title>
+{/block}
+{block name="css"}
+<style>
+    .padding-bm10{
+        padding-bottom: 10px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-body">
+    <div id="xform" class="layui-form">
+        <div class="layui-form-item">
+            <span>用户:</span>
+            <select name="admin_user_id" id="admin_user_id" lay-verify="required" disabled>
+                 <option value="{$user_role.admin_user_id}" selected>{$user_role.admin_user_name}</option>
+            </select>
+        </div>
+        <div class="layui-form-item">
+            <span>角色:</span>
+            <select name="role_id" id="role_id" lay-verify="required">
+                {volist name='roles' id='role'}
+                <option value="{$role.role_id}" {if $role.role_id==$user_role.role_id}}selected{/if}>{$role.role_name}</option>
+                {/volist}
+            </select>
+        </div>
+        <button class="layui-btn" onclick="submitForm()">
+            <i class="layui-icon">&#xe642;</i>修改
+        </button>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript">
+  //
+  layui.use('form', function(){
+    var form = layui.form;
+  });
+
+
+  //验证表单
+  function validateForm() {
+    var admin_user_id = $.trim($("#admin_user_id").val());
+    var role_id = $.trim($("#role_id").val());
+    if (!admin_user_id){
+      layer.msg('请选择用户', {icon: 6,time:1500});
+      return false;
+    }else if (!role_id){
+      layer.msg('请选择角色', {icon: 6,time:1500});
+      return false;
+    }else {
+      return {admin_user_id:admin_user_id,role_id:role_id};
+    }
+  }
+
+  //提交数据
+  function submitForm(){
+    var data = validateForm();
+    if (!data) return;
+    $.ajax({
+      type:'POST',
+      url:"{:url('/userrole/update')}?id={$user_role.user_role_id}",
+      data:data,
+      success:function (res) {
+        var res = JSON.parse(res);
+        if(res.code === 200){
+          layer.msg(res.msg,{icon:1,time:1000});
+          setTimeout("parent.location.reload();",1500);
+        }else {
+          layer.msg(res.msg,{icon:2,time:1000});
+        }
+      }
+    });
+  };
+</script>
+
+{/block}

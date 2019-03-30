@@ -1,0 +1,334 @@
+{extend name="base" /}
+{block name="title"}
+<title>添加商品</title>
+{/block}
+{block name="css"}
+<style>
+    .padding-bm10{
+        padding-bottom: 10px;
+    }
+    .goods-image{
+        padding: 8px;
+        width: 150px;
+        height: 150px;
+    }
+    .del-img{
+        position: relative;
+        left: -45px;
+        top: -55px;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+    }
+    .img-show{
+        margin: 10px 0px 10px 0px;
+        border: #0C0C0C dashed 1px;
+    }
+
+    /*商品详情选项卡*/
+    .layui-tab{
+        margin: 0px 0px 10px 0px;
+    }
+
+    .layui-tab-title li{
+        padding: 0px;
+        margin-right: 15px;
+    }
+    /*富文本区域*/
+    .layui-tab-content{
+        padding: 10px 0px 10px 0px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-body">
+    <div id="xform" class="layui-form">
+        <div class="layui-form-item">
+            <span>商品分类:</span>
+            <select name="goods_cate_id" id="goods_cate_id" lay-verify="required">
+                {volist name="goodsCates" id="goodsCate"}
+                <option value="{$goodsCate.goods_cate_id}">{$goodsCate.goods_cate_name}</option>
+                {/volist}
+            </select>
+        </div>
+        <div class="padding-bm10">
+            <span>商品名称:</span>
+            <input type="text" name="goods_name" id="goods_name" placeholder="请输入商品名称" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>商品描述:</span>
+            <input type="text" name="controller" id="goods_desc" placeholder="请输入商品描述" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>商品定价:</span>
+            <input type="number" name="goods_price" id="goods_price" placeholder="请输入商品定价" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>商品售价:</span>
+            <input type="number" name="goods_sprice" id="goods_sprice" placeholder="请输入商品售价" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>商品库存:</span>
+            <input type="number" name="goods_stock" id="goods_stock" placeholder="请输入商品库存" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>快递费:</span>
+            <input type="number" name="goods_express" id="goods_express" placeholder="请输入快递费" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>商品轮播图<span style="font-size: 12px;color: red">(第一张作为商品封面，最多只能上传4张)</span>:</span>
+            <div class="img">
+                <div class="img-show">
+                    <img src="__STATIC__/images/upload.png" width="150px" height="150px" id="goods_img">
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+            <ul class="layui-tab-title">
+                <li class="layui-this">商品详情</li>
+                <li>商品参数</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <textarea name="goods_detail" id="goods-detail">商品详情</textarea>
+                </div>
+                <div class="layui-tab-item">
+                    <textarea name="goods_param" id="goods-param">商品参数</textarea>
+                </div>
+            </div>
+        </div>
+        <button class="layui-btn" onclick="submitForm()">
+            <i class="layui-icon">&#xe608;</i>添加
+        </button>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="/static/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="/static/ueditor/ueditor.all.js"></script>
+<!-- 实例化编辑器 -->
+<script type="text/javascript">
+  UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+  UE.Editor.prototype.getActionUrl = function(action) {
+    if (action == 'uploadimage') {
+      return '/ueditoruploadimage';
+    } else {
+      return this._bkGetActionUrl.call(this, action);
+    }
+  };
+  goodsDetail = UE.getEditor('goods-detail',{
+    initialFrameWidth:"100%",
+    initialFrameHeight:"400"
+  });
+  goodsParam = UE.getEditor('goods-param',{
+    initialFrameWidth:"100%",
+    initialFrameHeight:"400"
+  });
+</script>
+<script>
+    // 上传图片
+  function uploadImage(file) {
+      // cos图片地址
+      var url = "";
+      var formData = new FormData();
+      formData.append('file',file);
+      formData.append('type','goods');
+      $.ajax({
+        type:"POST",
+        url:"{:url('/uploadimage')}",
+        async:false,
+        data:formData,
+        processData: false,
+        contentType : false,
+        success:function (res) {
+          var res = JSON.parse(res);
+          if(res.code == 200){
+            layer.msg(res.msg,{icon:1,time:2000});
+            url = res.data.url;
+          }else {
+            layer.msg(res.msg,{icon:2,time:2000});
+            return false;
+          }
+        }
+      });
+      return url;
+  }
+
+  // 删除cos指定的商品图片
+  function delCosImage(url) {
+      // 返回数据
+      var result = "";
+      $.ajax({
+        type:"POST",
+        url:"{:url('/delimage')}",
+        async:false,
+        data:{img_url:url},
+        success:function (res) {
+           result = res;
+        }
+      });
+      return result;
+  }
+
+  // 删除商品图片
+  function delImage(obj){
+    var obj = $(obj);
+    var url = obj.siblings().attr('src');
+    layer.confirm('确定要删除吗?', function(index){
+      //删除图片
+      var res = delCosImage(url);
+      res = JSON.parse(res);
+      if(res.code == 200){
+        layer.msg(res.msg,{icon:1,time:2000});
+        var src = obj.siblings().attr("src");
+        console.log(src);
+        $("input[value='"+src+"']").remove();
+        obj.parent().remove();
+        var imgs_size = $('input[name="goods_images[]"]').length;
+        if(imgs_size == 3){
+          var html = "<img src='__STATIC__/images/upload.png' width='150px' height='150px' id='goods_img'>"
+          $("#goods_img").css("display","");
+        }
+
+      }else {
+        layer.msg(res.msg,{icon:2,time:2000});
+        return false;
+      }
+      layer.close(index);
+    });
+  }
+
+  layui.use('upload', function(){
+    var upload = layui.upload;
+    //执行实例
+    var uploadInst = upload.render({
+      elem: '#goods_img', //绑定元素
+      size: 2048,
+      exts:'jpg|png|gif|bmp|jpeg',
+      auto: false,
+      choose:function(obj){
+        //将每次选择的文件追加到文件队列
+        var files = obj.pushFile();
+        var imgs_size = $('input[name="goods_images[]"]').length;
+        console.log(imgs_size);
+        if(imgs_size > 4){
+          layer.msg("最多上传4张图片",{icon:5,time:2000});
+          $("#goods_img").remove();
+          return false;
+        }
+        //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+        obj.preview(function(index, file, result){
+          var url = uploadImage(file);
+          var img = "<div style='display: inline-block'><img src="+url+" class='goods-image'><img src='__STATIC__/images/del.png' class='del-img' onclick='delImage(this)'></div>";
+          // 追加显示图片
+          $("#goods_img").before(img);
+          var input_img = "<input  name='goods_images[]' value="+url+" type='hidden'>"
+          $("#goods_img").before(input_img);
+          // 等于4时删除上传按钮
+          if(imgs_size == 3){
+            $("#goods_img").css("display","none");
+          }
+        });
+      },
+    });
+  });
+
+
+</script>
+<script>
+  // 获取input数组值
+  function arrayName(name){
+    var valArr = new Array;
+    $("input[name='"+name+"[]']").each(function(i){
+      valArr[i] = $(this).val();
+    });
+    var priv = valArr.join(',');
+    return priv;
+  }
+  //验证表单
+  function validateForm() {
+    var goods_cate_id = $("#goods_cate_id").val();
+    var goods_name = $("#goods_name").val();
+    var goods_desc = $("#goods_desc").val();
+    var goods_price = $("#goods_price").val();
+    var goods_sprice = $("#goods_sprice").val();
+    var goods_stock = $("#goods_stock").val();
+    var goods_express = $("#goods_express").val();
+    var goods_images = arrayName("goods_images");
+    var goods_detail = goodsDetail.getContent();
+    var goods_param = goodsParam.getContent();
+    if(goods_cate_id == ""){
+      layer.msg('请选择商品分类', {icon: 6,time:1500});
+      return false;
+    }else if (goods_name == ""){
+      layer.msg('请输入商品名称', {icon: 6,time:1500});
+      return false;
+    }else if (goods_desc == ""){
+      layer.msg('请输入商品描述', {icon: 6,time:1500});
+      return false;
+    }else if (goods_price == ""){
+      layer.msg('请输入商品定价', {icon: 6,time:1500});
+      return false;
+    }else if (goods_price < 0){
+      layer.msg('商品定价不能小于0', {icon: 6,time:1500});
+      return false;
+    }else if (goods_sprice == ""){
+      layer.msg('请输入商品售价', {icon: 6,time:1500});
+      return false;
+    }else if (goods_sprice < 0){
+      layer.msg('商品售价不能小于0', {icon: 6,time:1500});
+      return false;
+    }else if (goods_stock == ""){
+      layer.msg('请输入商品库存', {icon: 6,time:1500});
+      return false;
+    }else if (goods_stock < 0){
+      layer.msg('商品库存不能小于0', {icon: 6,time:1500});
+      return false;
+    }else if (goods_express == ""){
+      layer.msg('请输入快递费', {icon: 6,time:1500});
+      return false;
+    }else if (goods_express < 0){
+      layer.msg('快递费不能小于0', {icon: 6,time:1500});
+      return false;
+    }else if (goods_images == ""){
+      layer.msg('请上传商品轮播图', {icon: 6,time:1500});
+      return false;
+    }else {
+      return {
+        goods_cate_id:goods_cate_id,
+        goods_name:goods_name,
+        goods_desc:goods_desc,
+        goods_price:goods_price,
+        goods_sprice:goods_sprice,
+        goods_images:goods_images,
+        goods_stock:goods_stock,
+        goods_express:goods_express,
+        goods_detail:goods_detail,
+        goods_param:goods_param
+      };
+    }
+  }
+
+  //提交数据
+  function submitForm(){
+    var data = validateForm();
+    console.log(data);
+    if (!data) return;
+    $.ajax({
+      type:'POST',
+      url:"{:url('/goods/add')}",
+      data:data,
+      success:function (res) {
+        var res = JSON.parse(res);
+        if(res.code === 200){
+          layer.msg(res.msg,{icon:1,time:1000});
+          setTimeout("parent.location.reload();",1500);
+        }else {
+          layer.msg(res.msg,{icon:2,time:1500});
+        }
+      }
+    });
+  };
+</script>
+{/block}

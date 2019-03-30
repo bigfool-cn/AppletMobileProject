@@ -1,0 +1,190 @@
+{extend name="base" /}
+{block name="title"}
+<title>风景列表</title>
+{/block}
+{block name="css"}
+<link rel="stylesheet" href="__STATIC__/zoom/zoom.css">
+<style>
+
+    .layui-laypage a, .layui-laypage span {
+        height: 35px;
+        line-height: 35px;
+        font-size: 14px;
+    }
+
+    .layui-laypage-curr {
+        font-size: 14px !important;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="javascript:void(0);">栏目管理</a>
+        <a href="javascript:void(0);">小程序栏目列表</a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn" id="applet_menu_add"><i class="layui-icon"></i>添加</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$applet_menus | count} 条</span>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i
+                        class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>序号</th>
+            <th>标题</th>
+            <th>图标</th>
+            <th>URL</th>
+            <th>排序</th>
+            <th>是否对外开放</th>
+            <th>添加时间</th>
+            <th>修改时间</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {volist name="applet_menus" id="applet_menu"}
+        <tr>
+            <td>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id={$applet_menu.applet_menu_id}><i
+                        class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{$i}</td>
+            <td>{$applet_menu.applet_menu_title}</td>
+            <td><img src="{$applet_menu.applet_menu_image}"></td>
+            <td>{$applet_menu.applet_menu_url}</td>
+            <td id="sort">{$applet_menu.applet_menu_sort}</td>
+            <td>{$applet_menu.is_open?'是':'否'}</td>
+            <td>{$applet_menu.created_at | date="Y-m-d H:i:s"}</td>
+            <td>{$applet_menu.updated_at | date="Y-m-d H:i:s"}</td>
+            <td class="td-manage">
+                <a title="排序" onclick="sort(this,{$applet_menu.applet_menu_id})" href="javascript:;">
+                    <i class="layui-icon">&#xe619;</i>
+                </a>
+                {if $applet_menu.is_open}
+                    <a title="不对外开放" onclick="isOpen(this,{$applet_menu.applet_menu_id})" href="javascript:;">
+                        <i class="layui-icon">&#xe69c;</i>
+                    </a>
+                {else /}
+                    <a title="对外开放" onclick="isOpen(this,{$applet_menu.applet_menu_id})" href="javascript:;">
+                        <i class="layui-icon">&#xe6af;</i>
+                    </a>
+                {/if}
+                <a title="编辑" onclick='x_admin_show("修改小程序栏目","/appletmenu/update?id={$applet_menu.applet_menu_id}")' href="javascript:;">
+                <i class="layui-icon">&#xe642;</i>
+                </a>
+                <a title="删除" onclick="delOne(this,{$applet_menu.applet_menu_id})" href="javascript:;">
+                    <i class="layui-icon">&#xe640;</i>
+                </a>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+</div>
+{/block}
+{block name="js"}
+<script>
+
+  //点击添加小程序栏目
+  $("#applet_menu_add").on('click',function () {
+    x_admin_show('添加风景','/appletmenu/add');
+  })
+
+  // 排序
+  function sort(obj,id){
+    //发异步删除数据
+    $.ajax({
+      url: "{:url('/appletmenu/sort')}?id=" + id,
+      type: 'GET',
+      success:function (res) {
+        var res = JSON.parse(res);
+        console.log(res);
+        if(res.code === 200){
+          //捉到所有被选中的，发异步进行删除
+          layer.msg(res.msg,{icon:1,time:1000});
+          setTimeout("location.reload();",1500);
+          //$(obj).parents("tr").remove();
+        }else {
+          layer.msg(res.msg, {icon: 2,time:1000});
+        }
+      }
+    });
+  }
+
+  // 更改对外开放状态
+  function isOpen(obj,id){
+    //发异步删除数据
+    $.ajax({
+      url: "{:url('/appletmenu/open')}?id=" + id,
+      type: 'GET',
+      success:function (res) {
+        var res = JSON.parse(res);
+        console.log(res);
+        if(res.code === 200){
+          //捉到所有被选中的，发异步进行删除
+          layer.msg(res.msg,{icon:1,time:1000});
+          setTimeout("location.reload();",1500);
+          //$(obj).parents("tr").remove();
+        }else {
+          layer.msg(res.msg, {icon: 2,time:1000});
+        }
+      }
+    });
+  }
+
+  /*单个删除*/
+  function delOne(obj,id){
+    layer.confirm('确认要删除吗？',function(index){
+      //发异步删除数据
+      $.ajax({
+        url: "{:url('/appletmenu/delete')}?ids=" + id,
+        type: 'GET',
+        success:function (res) {
+          var res = JSON.parse(res);
+          if(res.code === 200){
+            //捉到所有被选中的，发异步进行删除
+            layer.msg(res.msg,{icon:1,time:1000});
+            setTimeout("location.reload();",1000);
+            //$(obj).parents("tr").remove();
+          }else {
+            layer.msg(res.msg, {icon: 1,time:1000});
+          }
+        }
+      });
+    });
+  }
+
+  //批量删除
+  function delAll (argument) {
+    var data = tableCheck.getData();
+    layer.confirm('确认要删除吗？',function(index){
+      $.ajax({
+        url: "{:url('/appletmenu/delete')}?ids=" + data,
+        type: 'GET',
+        success:function (res) {
+          var res = JSON.parse(res);
+          console.log(res);
+          if(res.code === 200){
+            //捉到所有被选中的，发异步进行删除
+            layer.msg(res.msg, {icon: 1,time:1000});
+            setTimeout("location.reload();",1000);
+            //$(".layui-form-checked").not('.header').parents('tr').remove();
+          }else {
+            layer.msg(res.msg, {icon: 1,time:1000});
+          }
+        }
+      });
+    });
+  }
+</script>
+<![endif]-->
+{/block}

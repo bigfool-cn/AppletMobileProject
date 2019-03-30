@@ -1,0 +1,22 @@
+/* pages/user-auth/user-auth.wxss */
+.img{
+  margin-top: 100px;
+  width: 300rpx;
+  height: 300rpx;
+  margin: 0 auto;
+  padding: 20rpx;
+  
+}
+.img > image{
+  width: 300rpx;
+  height: 300rpx;
+  border-radius: 15rpx;
+}
+
+.title{
+  text-align: center;
+}
+
+button{
+  margin: 20rpx 50rpx 20rpx 50rpx;
+}

@@ -1,0 +1,75 @@
+{extend name="base" /}
+{block name="title"}
+<title>修改商品分类</title>
+{/block}
+{block name="css"}
+<style>
+    .padding-bm10{
+        padding-bottom: 10px;
+    }
+
+</style>
+{/block}
+{block name="body"}
+<div class="x-body">
+    <div id="xform" class="layui-form">
+        <div class="layui-form-item">
+            <span>根分类:</span>
+            <select name="parent_id" id="parent_id" lay-verify="required">
+                {volist name="rootCates" id="rootCate"}
+                {if ($rootCate.goods_cate_id==$goodsCate.parent_id)}
+                <option value="{$rootCate.goods_cate_id}" selected>{$rootCate.goods_cate_name}</option>
+                {else /}
+                <option value="{$rootCate.goods_cate_id}">{$rootCate.goods_cate_name}</option>
+                {/if}
+                {/volist}
+            </select>
+        </div>
+        <div class="padding-bm10">
+            <span>商品分类名称:</span>
+            <input type="text" name="goods_cate_name" value="{$goodsCate.goods_cate_name}" id="goods_cate_name" placeholder="请输入商品分类名称" autocomplete="off" class="layui-input">
+        </div>
+        <button class="layui-btn" onclick="submitForm()">
+            <i class="layui-icon">&#xe608;</i>修改
+        </button>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script>
+  //验证表单
+  function validateForm() {
+    var parent_id = $("#parent_id").val();
+    var goods_cate_name = $("#goods_cate_name").val();
+    if(parent_id == ""){
+      layer.msg('请选择根分类', {icon: 6,time:1500});
+      return false;
+    }else if (goods_cate_name == ""){
+      layer.msg('请输入商品分类名称', {icon: 6,time:1500});
+      return false;
+    }else {
+      return {parent_id:parent_id,goods_cate_name:goods_cate_name};
+    }
+  }
+
+  //提交数据
+  function submitForm(){
+    var data = validateForm();
+    if (!data) return;
+    $.ajax({
+      type:'POST',
+      url:"{:url('/goodscate/update')}?id={$goodsCate.goods_cate_id}",
+      data:data,
+      success:function (res) {
+        var res = JSON.parse(res);
+        if(res.code === 200){
+          layer.msg(res.msg,{icon:1,time:1000});
+          setTimeout("parent.location.reload();",1500);
+        }else {
+          layer.msg(res.msg,{icon:2,time:1000});
+        }
+      }
+    });
+  };
+</script>
+{/block}

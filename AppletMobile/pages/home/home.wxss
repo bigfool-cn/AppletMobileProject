@@ -1,0 +1,165 @@
+page{
+  background: white;
+}
+swiper{
+  width: 100%;
+  height: 500rpx;
+}
+.goods-cate-swiper{
+  height:100rpx; 
+  background: white;
+  border-bottom: 1rpx #d9d9d9 solid;
+}
+
+image{
+  width: 100%;
+  height: 100%;
+}
+.left{
+  float: left;
+}
+
+.goods-cate{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  background: white;
+  padding-left: 25rpx;
+  width: 100%;
+}
+
+.goods-cate-item{
+  flex-grow: 0;
+  flex-shrink: 0;
+  text-align: center;
+  width: 120rpx;
+  height: 50rpx;
+  font-size: 30rpx;
+  margin-right: 25rpx;
+  background-color: #ee5236;
+  color: white;
+  border-radius: 8rpx;
+}
+
+.scroll-view{
+  height: 30px;
+  padding-right: 20rpx;
+  background: white;
+}
+
+.goods-skill{
+  height: 100%;
+  padding: 10rpx 0 20rpx 0;
+}
+.goods-skill-item{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: 8rpx;
+  padding-left: 10rpx; 
+}
+.goods_image{
+  width: 250rpx;
+  height: 250rpx;
+}
+.goods-item-right{
+  margin-left: 20rpx;
+  width: 500rpx;
+  height: 250rpx;
+  border-bottom: 1rpx  #dfdfdf solid;
+}
+.goods_skill_name{
+  padding-top: 5rpx;
+  padding-right: 10rpx;
+  font-size: 25rpx;
+  font-weight:bold;
+  height: 100rpx;
+}
+.skill-time{
+  height: 50rpx;
+  color: red;
+}
+.goods-item-rb{
+  font-size: 30rpx;
+  height: 100rpx;
+  vertical-align: bottom;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items:flex-end;
+}
+.goods-sprice{
+  font-size: 35rpx;
+  color: red;
+}
+.skill-btn{
+  background: #f32d0a;
+  color: white;
+  width: 150rpx;
+  font-size: 25rpx;
+  padding: 5rpx;
+  margin-right: 15rpx;
+  margin-bottom: 10rpx;
+  text-align: center;
+  border-radius: 8rpx;
+}
+.goods-price{
+  padding-left: 15rpx;
+  font-size: 25rpx;
+  color: #c7c7c7;
+  text-decoration: line-through;
+}
+
+.goods-skill{
+  width: 100%;
+  border-top: 1rpx #d9d9d9 solid;
+  border-bottom: 1rpx #d9d9d9 solid;
+}
+.goods-skill-item{
+  width: 100%;
+}
+
+.main_boxtwo{
+  width: 50%;
+  height: 480rpx;
+  background: white;
+  box-sizing: border-box;
+  border-top: 1px solid #CECECE;
+  border-right: 1px solid #CECECE;
+  float: left;
+  font-family: "微软雅黑"
+}
+.main-image{
+  width: 220rpx;
+  height: 210rpx;
+  display: block;
+  margin: 50rpx auto;
+}
+.box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction:column;
+}
+.main-title{
+  font-size: 30rpx;
+  font-weight: 800;
+}
+.main-titleTwo{
+  font-size: 23rpx;
+  margin-top: 10rpx;
+}
+.main-price{
+  font-size: 30rpx;
+  margin-top: 20rpx;
+  color: red;
+}
+.boxTwo{
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: white;
+  font-size: 30rpx;
+  padding-left: 10rpx;
+  font-family: "微软雅黑";
+}

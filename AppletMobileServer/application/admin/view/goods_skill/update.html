@@ -1,0 +1,380 @@
+{extend name="base" /}
+{block name="title"}
+<title>修改秒杀秒杀商品</title>
+{/block}
+{block name="css"}
+<style>
+    .padding-bm10 {
+        padding-bottom: 10px;
+    }
+
+    .goods-image {
+        padding: 8px;
+        width: 150px;
+        height: 150px;
+    }
+
+    .del-img {
+        position: relative;
+        left: -45px;
+        top: -55px;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+    }
+
+    .img-show {
+        margin: 10px 0px 10px 0px;
+        border: #0C0C0C dashed 1px;
+    }
+
+    /*秒杀商品详情选项卡*/
+    .layui-tab {
+        margin: 0px 0px 10px 0px;
+    }
+
+    .layui-tab-title li {
+        padding: 0px;
+        margin-right: 15px;
+    }
+
+    /*富文本区域*/
+    .layui-tab-content {
+        padding: 10px 0px 10px 0px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-body">
+    <div id="xform" class="layui-form">
+        <div class="layui-form-item">
+            <span>秒杀商品分类:</span>
+            <select name="goods_cate_id" id="goods_cate_id" lay-verify="required">
+                {volist name="goodsCates" id="goodsCate"}
+                <option value="{$goodsCate.goods_cate_id}" {if
+                        $goodsCate.goods_cate_id==$goodsSkill.goods_cate_id}selected{/if}>{$goodsCate.goods_cate_name}
+                </option>
+                {/volist}
+            </select>
+        </div>
+        <div class="padding-bm10">
+            <span>秒杀商品名称:</span>
+            <input type="text" name="goods_skill_name" id="goods_skill_name" value="{$goodsSkill.goods_skill_name}"
+                   placeholder="请输入秒杀商品名称" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>秒杀商品描述:</span>
+            <input type="text" name="controller" id="goods_skill_desc" value="{$goodsSkill.goods_skill_desc}"
+                   placeholder="请输入秒杀商品描述" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>秒杀商品定价:</span>
+            <input type="number" name="goods_skill_price" id="goods_skill_price" value="{$goodsSkill.goods_skill_price}"
+                   placeholder="请输入秒杀商品定价" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>秒杀商品售价:</span>
+            <input type="number" name="goods_skill_sprice" id="goods_skill_sprice"
+                   value="{$goodsSkill.goods_skill_sprice}" placeholder="请输入秒杀商品售价" autocomplete="off"
+                   class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>秒杀商品库存:</span>
+            <input type="number" name="goods_skill_stock" id="goods_skill_stock" value="{$goodsSkill.goods_skill_stock}"
+                   placeholder="请输入秒杀商品库存" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>快递费:</span>
+            <input type="number" name="goods_skill_express" id="goods_skill_express"
+                   value="{$goodsSkill.goods_skill_express}" placeholder="请输入快递费" autocomplete="off"
+                   class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>秒杀时间:</span>
+            <input type="text" name="goods_skill_time" id="goods_skill_time" value="{$goodsSkill.goods_skill_time}"
+                   placeholder="请选择秒杀时间" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>秒杀商品轮播图<span style="font-size: 12px;color: red">(第一张作为秒杀商品封面，最多只能上传4张)</span>:</span>
+            <div class="img">
+                <div class="img-show">
+                    {volist name="$goodsSkill.goods_skill_image_urls" id="goods_skill_image_url"}
+                    <div style='display: inline-block'><img src="{$goods_skill_image_url}" class='goods-image'>
+                        <img src='__STATIC__/images/del.png' class='del-img' onclick='delImage(this)'>
+                    </div>
+                    {/volist}
+                    <img src="__STATIC__/images/upload.png" width="150px" height="150px" id="goods_skill_img" {if
+                         count($goodsSkill.goods_skill_image_urls)>3}style="display: none"{/if}>
+                    {volist name="$goodsSkill.goods_skill_image_urls" id="goods_skill_image_url"}
+                    <input name='goods_skill_images[]' value="{$goods_skill_image_url}" type='hidden'>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+            <ul class="layui-tab-title">
+                <li class="layui-this">秒杀商品详情</li>
+                <li>秒杀商品参数</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <textarea name="goods_skill_detail" id="goods-detail">{$goodsSkill.goods_skill_detail}</textarea>
+                </div>
+                <div class="layui-tab-item">
+                    <textarea name="goods_skill_param" id="goods-param">{$goodsSkill.goods_skill_param}</textarea>
+                </div>
+            </div>
+        </div>
+        <button class="layui-btn" onclick="submitForm()">
+            <i class="layui-icon">&#xe642;</i>修改
+        </button>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="/static/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="/static/ueditor/ueditor.all.js"></script>
+<!-- 实例化编辑器 -->
+<script type="text/javascript">
+  UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+  UE.Editor.prototype.getActionUrl = function (action) {
+    if (action == 'uploadimage') {
+      return '/ueditoruploadimage';
+    } else {
+      return this._bkGetActionUrl.call(this, action);
+    }
+  };
+  goodsDetail = UE.getEditor('goods-detail', {
+    initialFrameWidth: "100%",
+    initialFrameHeight: "400"
+  });
+  goodsParam = UE.getEditor('goods-param', {
+    initialFrameWidth: "100%",
+    initialFrameHeight: "400"
+  });
+</script>
+<script>
+  // 上传图片
+  function uploadImage(file) {
+    // cos图片地址
+    var url = "";
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'goods');
+    $.ajax({
+      type: "POST",
+      url: "{:url('/uploadimage')}",
+      async: false,
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (res) {
+        var res = JSON.parse(res);
+        if (res.code == 200) {
+          layer.msg(res.msg, {icon: 1, time: 2000});
+          url = res.data.url;
+        } else {
+          layer.msg(res.msg, {icon: 2, time: 2000});
+          return false;
+        }
+      }
+    });
+    return url;
+  }
+
+  // 删除cos指定的秒杀商品图片
+  function delCosImage(url) {
+    // 返回数据
+    var result = "";
+    $.ajax({
+      type: "POST",
+      url: "{:url('/delimage')}",
+      async: false,
+      data: {img_url: url},
+      success: function (res) {
+        result = res;
+      }
+    });
+    return result;
+  }
+
+  // 删除秒杀商品图片
+  function delImage(obj) {
+    var obj = $(obj);
+    var url = obj.siblings().attr('src');
+    layer.confirm('确定要删除吗?', function (index) {
+      //删除图片
+      var res = delCosImage(url);
+      res = JSON.parse(res);
+      if (res.code == 200) {
+        layer.msg(res.msg, {icon: 1, time: 2000});
+        var src = obj.siblings().attr("src");
+        console.log(src);
+        $("input[value='" + src + "']").remove();
+        obj.parent().remove();
+        var imgs_size = $('input[name="goods_skill_images[]"]').length;
+        if (imgs_size == 3) {
+          var html = "<img src='__STATIC__/images/upload.png' width='150px' height='150px' id='goods_skill_img'>"
+          $("#goods_skill_img").css("display", "");
+        }
+
+      } else {
+        layer.msg(res.msg, {icon: 2, time: 2000});
+        return false;
+      }
+      layer.close(index);
+    });
+  }
+
+  layui.use('upload', function () {
+    var upload = layui.upload;
+    //执行实例
+    var uploadInst = upload.render({
+      elem: '#goods_skill_img', //绑定元素
+      size: 2048,
+      exts: 'jpg|png|gif|bmp|jpeg',
+      auto: false,
+      choose: function (obj) {
+        //将每次选择的文件追加到文件队列
+        var files = obj.pushFile();
+        var imgs_size = $('input[name="goods_images[]"]').length;
+        console.log(imgs_size);
+        if (imgs_size > 4) {
+          layer.msg("最多上传4张图片", {icon: 5, time: 2000});
+          $("#goods_img").remove();
+          return false;
+        }
+        //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+        obj.preview(function (index, file, result) {
+          var url = uploadImage(file);
+          var img = "<div style='display: inline-block'><img src=" + url + " class='goods-image'><img src='__STATIC__/images/del.png' class='del-img' onclick='delImage(this)'></div>";
+          // 追加显示图片
+          $("#goods_skill_img").before(img);
+          var input_img = "<input  name='goods_skill_images[]' value=" + url + " type='hidden'>"
+          $(".img-show").append(input_img);
+          // 等于4时删除上传按钮
+          if (imgs_size == 3) {
+            $("#goods_skill_img").css("display", "none");
+          }
+        });
+      },
+    });
+  });
+
+  //获取当前时间
+  current_datetime = getNowFormatDate();
+
+  layui.use('laydate', function () {
+    var laydate = layui.laydate;
+    laydate.render({
+      elem: '#goods_skill_time', //指定元素
+      type: 'datetime',
+      min: current_datetime,
+    });
+  })
+
+
+</script>
+<script>
+  // 获取input数组值
+  function arrayName(name) {
+    var valArr = new Array;
+    $("input[name='" + name + "[]']").each(function (i) {
+      valArr[i] = $(this).val();
+    });
+    var priv = valArr.join(',');
+    return priv;
+  }
+
+  //验证表单
+  function validateForm() {
+    var goods_cate_id = $("#goods_cate_id").val();
+    var goods_skill_name = $("#goods_skill_name").val();
+    var goods_skill_desc = $("#goods_skill_desc").val();
+    var goods_skill_price = $("#goods_skill_price").val();
+    var goods_skill_sprice = $("#goods_skill_sprice").val();
+    var goods_skill_stock = $("#goods_skill_stock").val();
+    var goods_skill_express = $("#goods_skill_express").val();
+    var goods_skill_time = $("#goods_skill_time").val();
+    var goods_skill_images = arrayName("goods_skill_images");
+    var goods_skill_detail = goodsDetail.getContent();
+    var goods_skill_param = goodsParam.getContent();
+    if (goods_cate_id == "") {
+      layer.msg('请选择秒杀商品分类', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_name == "") {
+      layer.msg('请输入秒杀商品名称', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_desc == "") {
+      layer.msg('请输入秒杀商品描述', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_price == "") {
+      layer.msg('请输入秒杀商品定价', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_price < 0) {
+      layer.msg('秒杀商品定价不能小于0', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_sprice == "") {
+      layer.msg('请输入秒杀商品售价', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_sprice < 0) {
+      layer.msg('秒杀商品售价不能小于0', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_stock == "") {
+      layer.msg('请输入秒杀商品库存', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_stock < 0) {
+      layer.msg('秒杀商品库存不能小于0', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_express == "") {
+      layer.msg('请输入快递费', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_time == "") {
+      layer.msg('请选择秒杀时间', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_express < 0) {
+      layer.msg('快递费不能小于0', {icon: 6, time: 1500});
+      return false;
+    } else if (goods_skill_images == "") {
+      layer.msg('请上传秒杀商品轮播图', {icon: 6, time: 1500});
+      return false;
+    } else {
+      return {
+        goods_cate_id: goods_cate_id,
+        goods_skill_name: goods_skill_name,
+        goods_skill_desc: goods_skill_desc,
+        goods_skill_price: goods_skill_price,
+        goods_skill_sprice: goods_skill_sprice,
+        goods_skill_images: goods_skill_images,
+        goods_skill_stock: goods_skill_stock,
+        goods_skill_express: goods_skill_express,
+        goods_skill_time: goods_skill_time,
+        goods_skill_detail: goods_skill_detail,
+        goods_skill_param: goods_skill_param
+      };
+    }
+  }
+
+  //提交数据
+  function submitForm() {
+    var data = validateForm();
+    console.log(data);
+    if (!data) return;
+    $.ajax({
+      type: 'POST',
+      url: "{:url('/goodsskill/update')}?id={$goodsSkill.goods_skill_id}",
+      data: data,
+      success: function (res) {
+        var res = JSON.parse(res);
+        if (res.code === 200) {
+          layer.msg(res.msg, {icon: 1, time: 1000});
+          setTimeout("parent.location.reload();", 1500);
+        } else {
+          layer.msg(res.msg, {icon: 2, time: 1500});
+        }
+      }
+    });
+  };
+</script>
+{/block}

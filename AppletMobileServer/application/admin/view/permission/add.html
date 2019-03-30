@@ -1,0 +1,95 @@
+{extend name="base" /}
+{block name="title"}
+<title>添加权限</title>
+{/block}
+{block name="css"}
+<style>
+    .padding-bm10{
+        padding-bottom: 10px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-body">
+    <div id="xform" class="layui-form">
+        <div class="padding-bm10">
+            <span>权限名称:</span>
+            <input type="text" name="permission_name" id="permission_name" placeholder="请输入权限名称" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-item">
+            <span>请求方法:</span>
+            <select name="method" id="method" lay-verify="required">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+                <option value="ALL">ALL</option>
+            </select>
+        </div>
+        <div class="padding-bm10">
+            <span>控制器</span>
+            <input type="text" name="controller" id="controller" placeholder="请输入控制器" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>方法:</span>
+            <input type="text" name="action" id="action" placeholder="请输入方法" autocomplete="off" class="layui-input">
+        </div>
+        <button class="layui-btn" onclick="submitForm()">
+            <i class="layui-icon">&#xe608;</i>添加
+        </button>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript">
+  //
+  layui.use('form', function(){
+    var form = layui.form;
+  });
+
+
+  //验证表单
+  function validateForm() {
+    var permission_name = $.trim($("#permission_name").val());
+    var method = $.trim($("#method").val());
+    var controller = $.trim($("#controller").val());
+    var action = $.trim($("#action").val());
+    if (!permission_name){
+      layer.msg('请输入权限名称', {icon: 6,time:1500});
+      return false;
+    }else if (!method){
+      layer.msg('请选择请求方法', {icon: 6,time:1500});
+      return false;
+    }else if (!controller){
+      layer.msg('请输入控制器', {icon: 6,time:1500});
+      return false;
+    }else if (!action){
+      layer.msg('请输入方法', {icon: 6,time:1500});
+      return false;
+    }else {
+      return {permission_name:permission_name,method:method,controller:controller,action:action};
+    }
+  }
+
+  //提交数据
+  function submitForm(){
+    var data = validateForm();
+    if (!data) return;
+    $.ajax({
+      type:'POST',
+      url:"{:url('/permission/add')}",
+      data:data,
+      success:function (res) {
+        var res = JSON.parse(res);
+        if(res.code === 200){
+          layer.msg(res.msg,{icon:1,time:1000});
+          setTimeout("parent.location.reload();",1500);
+        }else {
+          layer.msg(res.msg,{icon:2,time:1000});
+        }
+      }
+    });
+  };
+</script>
+
+{/block}

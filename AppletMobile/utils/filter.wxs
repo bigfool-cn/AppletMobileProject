@@ -1,0 +1,12 @@
+// 截取字符串
+var titleFilter = function(title,size){
+  var titleNew = title.substring(0, size)
+  if(title.length > titleNew.length){
+    titleNew += "..."
+  }
+  return titleNew
+}
+
+module.exports = {
+  titleFilter: titleFilter,
+};

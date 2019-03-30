@@ -1,0 +1,51 @@
+<import src="../../wxParse/wxParse.wxml"/>
+<wxs src='../../utils/filter.wxs' module='filter' />
+<view id='box'>
+  <swiper 
+      indicator-dots="Boolean"
+      indicator-color="#ebebeb"
+      indicator-active-color="rgba(0, 0, 0, .3)"
+      autoplay="Boolean"
+      circular="Boolean"
+  >
+    <swiper-item wx:for="{{goodsSkillSwipers}}" wx:for-item="item" wx:for-index="idx">
+      <image src="{{item}}" class="slide-image" />
+    </swiper-item>
+  </swiper>
+
+  <view class='box'>
+    <view class='box-item-top'>
+      <text class='price'>¥{{goodsSkill.goods_skill_sprice}}</text>
+      <text class='msales'>¥{{goodsSkill.goods_skill_price}}</text>
+    </view>
+    <text class='title'>{{filter.titleFilter(goodsSkill.goods_skill_desc,30)}}</text>
+    <view class='box-item'>
+      <text class='expressage'>快递: {{goodsSkill.goods_skill_express}}</text>
+      <text class='stock'>库存: {{goodsSkill.goods_skill_stock}}</text>
+    </view>
+  </view>
+
+  <view class='boxtwo'>
+    <view class="boxtwo-tab-nav {{selectIndex == 0 ?'on':''}}" bindtap="boxtwo" data-index="0">商品详情</view>
+    <view class="boxtwo-tab-nav {{selectIndex == 1 ?'on':''}}" bindtap="boxtwo" data-index="1">产品参数
+   </view>
+
+      <view class="boxtwo-content"  class='img_one'>
+          <view wx:if="{{selectIndex == 0}}" >
+              <template is="wxParse" data="{{wxParseData:goodsSkillDetail.nodes}}"/>
+          </view>
+          <view wx:if="{{selectIndex == 1}}" class='product'>
+            <template is="wxParse" data="{{wxParseData:goodsSkillParam.nodes}}"/>
+          </view>
+      </view>
+  </view>
+
+  <view class='dibu'>
+    <view class='btn-start' wx:if='{{goodsSkill.count > 0}}'>
+        <text class='text' bindtap="skillAction" data-id="{{goodsSkill.goods_skill_id}}" >{{goodsSkill.skill_time}}</text>
+    </view>
+    <view class='btn-end' wx:else>
+        <text class='text'>已结束</text>
+    </view>
+  </view>
+</view>

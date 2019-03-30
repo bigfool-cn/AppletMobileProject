@@ -1,0 +1,128 @@
+{extend name="base" /}
+{block name="title"}
+<title>角色列表</title>
+{/block}
+{block name="css"}
+<style>
+
+    .layui-laypage a, .layui-laypage span {
+        height: 35px;
+        line-height: 35px;
+        font-size: 14px;
+    }
+
+    .layui-laypage-curr {
+        font-size: 14px !important;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="javascript:void(0);">权限管理</a>
+        <a href="javascript:void(0);">角色列表</a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn" id="role_add"><i class="layui-icon"></i>添加</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$pages->total()} 条</span>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i
+                        class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>角色</th>
+            <th>添加时间</th>
+            <th>修改时间</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {volist name="roles" id="role"}
+        <tr>
+            <td>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id={$role.role_id}><i
+                        class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{$role.role_name}</td>
+            <td>{$role.create_time | date="Y-m-d H:i:s"}</td>
+            <td>{$role.update_time | date="Y-m-d H:i:s"}</td>
+            <td class="td-manage">
+                <a title="编辑" onclick='x_admin_show("修改角色","/role/update?id={$role.role_id}")' href="javascript:;">
+                    <i class="layui-icon">&#xe642;</i>
+                </a>
+                {if !in_array($role.role_id,$exclude)}
+                <a title="删除" onclick="delOne(this,{$role.role_id})" href="javascript:;">
+                    <i class="layui-icon">&#xe640;</i>
+                </a>
+                {/if}
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    {include file='page'}
+</div>
+{/block}
+{block name="js"}
+<script>
+
+  //点击添加角色
+  $("#role_add").on('click',function () {
+    x_admin_show('添加角色','/role/add');
+  })
+
+  /*单个删除*/
+  function delOne(obj,id){
+    layer.confirm('确认要删除吗？',function(index){
+      //发异步删除数据
+      $.ajax({
+        url: "{:url('/role/delete')}?ids=" + id,
+        type: 'GET',
+        success:function (res) {
+          var res = JSON.parse(res);
+          if(res.code === 200){
+            //捉到所有被选中的，发异步进行删除
+            layer.msg(res.msg,{icon:1,time:1000});
+            setTimeout("location.reload();",1000);
+            //$(obj).parents("tr").remove();
+          }else {
+            layer.msg(res.msg, {icon: 1,time:1000});
+          }
+        }
+      });
+    });
+  }
+
+  //批量删除
+  function delAll (argument) {
+    var data = tableCheck.getData();
+    layer.confirm('确认要删除吗？',function(index){
+      $.ajax({
+        url: "{:url('/role/delete')}?ids=" + data,
+        type: 'GET',
+        success:function (res) {
+          var res = JSON.parse(res);
+          console.log(res);
+          if(res.code === 200){
+            //捉到所有被选中的，发异步进行删除
+            layer.msg(res.msg, {icon: 1,time:1000});
+            setTimeout("location.reload();",1000);
+            //$(".layui-form-checked").not('.header').parents('tr').remove();
+          }else {
+            layer.msg(res.msg, {icon: 1,time:1000});
+          }
+        }
+      });
+    });
+  }
+</script>
+<![endif]-->
+{/block}

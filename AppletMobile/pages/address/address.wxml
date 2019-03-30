@@ -1,0 +1,34 @@
+<!--pages/my-address/my-address.wxml-->
+<view style='margin-top: 10rpx;'>
+  <view class='address-item' wx:for="{{addressList}}" wx:key="index">
+    <view class='address-info'>
+      <view class='address-name-mobile'>
+        <text>{{item.addressee}}</text>
+        <text>{{item.mobile}}</text>
+      </view>
+      <view style='padding:20rpx 0 20rpx 0'>{{item.address}}{{item.xx_address}}</view>
+    </view>
+    <view class='address-action'>
+      <view class='icon'>
+          <icon wx:if="{{item.is_mr}}" type="success" color="#405F80" size="23" 
+            bindtap="selectedAddress" data-id="{{item.address_id}}" data-mr="{{item.is_mr}}"/>
+          <icon wx:else type="circle" bindtap="selectedAddress" size="23" data-mr="{{item.is_mr}}" data-id="{{item.address_id}}"/>
+          <text style='margin-left:10rpx;'>默认地址</text>
+      </view>
+      <view class='address-edit'>
+        <view bindtap='editAddress' data-id="{{item.address_id}}">
+          <image src='/image/edit.png'></image>
+          <text style='margin-left:15rpx;'>编辑</text>
+        </view>
+        <view style='margin-left:25rpx;' bindtap='delAddress' data-id="{{item.address_id}}">
+          <image src='/image/del.png'></image>
+          <text style='margin-left:15rpx;'>删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view style='height:1rpx;background:#d9d9d9;'></view>
+  <view style='padding:30rpx 100rpx 15rpx 100rpx;'>
+     <button type='warn' size='default' bindtap='addAddress'>添加新地址</button>
+  </view>
+</view>

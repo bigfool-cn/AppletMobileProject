@@ -1,0 +1,18 @@
+<!--pages/user-auth/user-auth.wxml-->
+<view>
+  <view class='img'>
+    <image src='/image/avatar.gif'></image>
+  </view>
+  <view class='title'>
+    授权登录大俊商城
+  </view>
+  <!-- 需要使用 button 来授权登录 -->
+  <button type='primary'
+    wx:if="{{canIUse}}"
+    open-type="getUserInfo"
+    bindgetuserinfo="bindGetUserInfo"
+  >
+    授权登录
+  </button>
+  <view wx:else>请升级微信版本</view>
+</view>

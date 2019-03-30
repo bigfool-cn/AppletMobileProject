@@ -1,0 +1,6 @@
+{
+ "usingComponents": {
+    "loadMore": "/pages/components/loadMore/loadMore"
+  },
+  "enablePullDownRefresh":true
+}

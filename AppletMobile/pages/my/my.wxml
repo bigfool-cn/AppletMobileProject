@@ -1,0 +1,21 @@
+<view>
+  <view class='my-main'>
+      <image src="{{UserImage}}" class="user-image"></image>
+      <text class="username">{{Username}}</text>
+  </view>
+  
+  <!-- <view class='my-mainthree' bindtap='about'>
+      <text>关于作者</text>
+      <image src='/image/right.png'></image>
+  </view> -->
+  <view class="weui-cells weui-cells_after-title">
+      <navigator url="/pages/order/order" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+          <view class="weui-cell__bd">我的订单</view>
+          <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+      <navigator url="/pages/address/address" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+          <view class="weui-cell__bd">收货地址</view>
+          <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+  </view>
+</view> 

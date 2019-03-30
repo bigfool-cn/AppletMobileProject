@@ -1,0 +1,34 @@
+<!--pages/order/order.wxml-->
+<wxs src='../../utils/filter.wxs' module='filter' />
+<view class='order'>
+  <view class='order-item' wx:for='{{orderList}}' wx:key='unique' bindtap='goOrderDetail' data-id='{{item.order_id}}'>
+    <view class='order-status'>{{item.order_status == 0 ? '等待买家付款': '已付款'}}</view>
+    <view class='order-item-top' wx:for='{{item.goods}}' wx:for-item='goods' wx:key='unique'>
+      <view class='goods-image'>
+        <image src='{{goods.goods_image_url}}'></image>
+      </view>
+      <view class='order-item-right'>
+        <text class='goods-desc'>{{filter.titleFilter(goods.goods_desc,30)}}</text>
+        <view class='order-item-rb'>
+          <text class='goods-sprice'>¥{{goods.goods_sprice}}</text>
+          <text class='goods-num'>x{{goods.count}}</text>
+        </view>
+      </view>
+    </view>
+    <view class='order-item-bottom'>
+      <view class='order-item-total'>
+        <text>共{{item.count}}件商品</text>
+        <text style='margin-left:20rpx;'>合计:¥{{item.order_total_amount}}{{item.order_express !='0.00' ?'(含运费¥'+item.order_express+')':''}}</text>
+      </view>
+      <view class='order-item-bb' wx:if='{{item.order_status == 0}}'>
+        <view class='btn' catchtap='delOrder' data-id='{{item.order_id}}'>取消订单</view>
+        <view class='btn' style='border:1rpx #fd3939 solid;color:#fd3939;'>付款</view>
+      </view>
+      <view class='order-item-bb' wx:else>
+        <view class='btn'>查看物流</view>
+        <view class='btn'>退货</view>
+      </view>
+    </view>
+  </view>
+  <loadMore loadMore="{{loadMore}}" loading="{{loading}}" notData="{{notData}}"></loadMore>
+</view>

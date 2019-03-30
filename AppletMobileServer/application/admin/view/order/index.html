@@ -1,0 +1,95 @@
+{extend name="base" /}
+{block name="title"}
+<title>订单列表</title>
+{/block}
+{block name="css"}
+<style>
+    .layui-laypage a, .layui-laypage span{
+        height: 35px;
+        line-height: 35px;
+        font-size: 14px;
+    }
+    .layui-laypage-curr{
+        font-size: 14px !important;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="javascript:void(0);">订单管理</a>
+        <a href="javascript:void(0);">订单列表</a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form id="search" class="layui-form layui-col-md12 x-so" action="">
+            <input class="layui-input" placeholder="用户" name="user_name" value="{$user_name}" id="user_name">
+            <input class="layui-input" placeholder="订单号" name="order_sn" value="{$order_sn}" id="order_sn" style="width: 200px;">
+            <input class="layui-input" placeholder="开始时间" name="start" value="{$start}" id="start">
+            <input class="layui-input" placeholder="结束时间" name="end" value="{$end}" id="end">
+            <button class="layui-btn"  lay-submit="" lay-filter="sreach" style="margin-bottom: 2px;"><i class="layui-icon">&#xe615;</i></button>
+            <button type="button" class="layui-btn" style="margin-bottom: 2px;background: #ffc83c;" onclick="resetForm()">
+                <i class="layui-icon">&#xe669;</i>
+            </button>
+        </form>
+    </div>
+    <span class="x-right" style="line-height:40px">共有数据：{$pages->total()} 条</span>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>订单号</th>
+            <th>用户名</th>
+            <th>订单商品</th>
+            <th>订单商品数量</th>
+            <th>订单总金额</th>
+            <th>订单运费</th>
+            <th>收货地址</th>
+            <th>收货号码</th>
+            <th>是否子订单</th>
+            <th>创建时间</th>
+        </thead>
+        <tbody>
+        {volist name="orders" id="order"}
+        <tr>
+            <td>{$order.order_sn}</td>
+            <td>{$order.user_name}</td>
+            <td>{$order.goods_id}</td>
+            <td>{$order.goods_num}</td>
+            <td>{$order.order_amount}</td>
+            <td>{$order.order_express}</td>
+            <td>{$order.address}{$order.xx_address}</td>
+            <td>{$order.mobile}</td>
+            <td>{$order.parent_id != 0 ? '是' : '不是' }</td>
+            <td>{$order.create_time | date="Y-m-d H:i:s"}</td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    {include file="page" /}
+</div>
+{/block}
+{block name="js"}
+<script>
+    function resetForm()
+    {
+      $('.layui-input').attr("value","");
+    }
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'date'
+        });
+      //执行一个laydate实例
+      laydate.render({
+        elem: '#end', //指定元素
+        type: 'date'
+      });
+    });
+</script>
+{/block}

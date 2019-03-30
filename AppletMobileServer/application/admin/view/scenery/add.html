@@ -1,0 +1,251 @@
+{extend name="base" /}
+{block name="title"}
+<title>添加风景</title>
+{/block}
+{block name="css"}
+<style>
+    .padding-bm10{
+        padding-bottom: 10px;
+    }
+    .img{
+        width:150px;
+        height:130px;
+        padding: 10px;
+        text-align: center;
+        border: 1px #a7a7a7 dotted;
+        margin-bottom: 10px;
+    }
+    .map{
+        width:100%;
+        height:600px;
+    }
+    .search{
+        white-space: nowrap;
+        padding-top: 10px;
+    }
+    .search > input{
+        width: 38%;
+        float: left;
+        margin-bottom: 10px;
+    }
+    .search > input:nth-child(1){
+        width: 14%;
+        float: left;
+        margin-bottom: 10px;
+    }
+    .search > button{
+        float: left;
+        margin-bottom: 10px;
+    }
+
+</style>
+{/block}
+{block name="body"}
+<div class="x-body">
+    <div id="xform" class="layui-form">
+        <div class="padding-bm10">
+            <span>标题:</span>
+            <input type="text" name="title" id="title" placeholder="请输入标题" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>封面:</span>
+            <div class="img" id="img">
+                <img src="__STATIC__/images/upload.png" width="150px" height="130px" id="img-show">
+                <input name="cover" id="cover" value="" type="hidden">
+            </div>
+        </div>
+        <div class="padding-bm10">
+            <label>是否发布:</label>
+            <div>
+                <input type="radio" name="state" id="state" value="1" title="是" required>
+                <input type="radio" name="state" value="0" title="否" checked>
+            </div>
+        </div>
+        <div class="padding-bm10">
+            <span>选取位置:</span>
+            <div class="search">
+                <input type="text" name="search-city" id="search-city" class="layui-input" placeholder="输入城市名">
+                <input type="text" name="search-address" id="search-address" class="layui-input" placeholder="请输入位置具体地址" style="margin-left: 2%;">
+                <input type="text" name="address" id="address" class="layui-input" readonly style="width: 42%;background-color: #e6e6e6;margin-left: 4%;">
+                <input type="hidden" name="latlng" id="latlng">
+                <!--<button class="layui-btn" onclick="codeAddress()">搜索</button>-->
+            </div>
+            <div id="map" class="map"></div>
+        </div>
+        <div class="padding-bm10">
+            <span>内容:</span>
+            <textarea id="content" name="content"></textarea>
+        </div>
+        <button class="layui-btn" onclick="submitForm()">
+            <i class="layui-icon">&#xe608;</i>添加
+        </button>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script src="__STATIC__/ueditor/ueditor.config.js"></script>
+<script src="__STATIC__/ueditor/ueditor.all.min.js"></script>
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=FIGBZ-AWJWJ-C2RFO-FGZOU-EGL3K-A5F6K"></script>
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=FIGBZ-AWJWJ-C2RFO-FGZOU-EGL3K-A5F6K&libraries=place"></script>
+<script>
+    //腾讯地图
+    var map = new qq.maps.Map(document.getElementById("map"), {
+      // 地图的中心地理坐标。
+      center: new qq.maps.LatLng(24.354095,114.132800),
+      zoomControl:false,
+      zoom:12,
+    });
+
+    //实例化自动完成 选区地点
+    var ap = new qq.maps.place.Autocomplete(document.getElementById('search-address'),{
+      location:'韶关市',
+    });
+    //调用Poi检索类。用于进行本地检索、周边检索等服务。
+    var searchService = new qq.maps.SearchService({
+      complete : function(results){
+        console.log(results);
+        if(results.type === "CITY_LIST") {
+          alert("当前检索结果分布较广，请指定城市进行检索");
+          return;
+        }
+        var pois = results.detail.pois;
+        console.log(results);
+        var latlngBounds = new qq.maps.LatLngBounds();
+        for(var i = 0,l = pois.length;i < l; i++){
+          var poi = pois[i];
+          latlngBounds.extend(poi.latLng);
+          var marker = new qq.maps.Marker({
+            map:map,
+            position: poi.latLng
+          });
+          marker.setTitle(poi.name);
+          //点击Marker会弹出反查结果
+          qq.maps.event.addListener(marker, 'click', function() {
+            //alert("坐标地址为： " + result.detail.address);
+            layer.confirm('确定选取 '+poi.address+poi.name+' ？', {
+              btn: ['确定','取消'] //按钮
+            }, function(){
+              layer.msg('选取地点成功', {icon: 1,time:1000});
+              $("#address").val(poi.address+poi.name);
+              $("#latlng").val(poi.latLng);
+            }, function(){
+              //
+            });
+            console.log(poi.address+poi.name);
+          });
+          break;
+        }
+        map.fitBounds(latlngBounds);
+      }
+    });
+    //添加监听事件
+    qq.maps.event.addListener(ap, "confirm", function(res){
+      var city = $("#search-city").val();
+      searchService.setLocation(city);
+      searchService.search(res.value);
+    });
+
+
+    //地址和经纬度之间进行转换服务
+    // geocoder = new qq.maps.Geocoder();
+    // function codeAddress() {
+    //   var address = document.getElementById("search-address").value;
+    //   //对指定地址进行解析
+    //   geocoder.getLocation(address);
+    //   //设置服务请求成功的回调函数
+    //   geocoder.setComplete(function(result) {
+    //     map.setCenter(result.detail.location);
+    //     var marker = new qq.maps.Marker({
+    //       map: map,
+    //       position: result.detail.location
+    //     });
+    //     //点击Marker会弹出反查结果
+    //     qq.maps.event.addListener(marker, 'click', function() {
+    //       alert("坐标地址为： " + result.detail.address);
+    //       console.log(result);
+    //     });
+    //   });
+    //   //若服务请求失败，则运行以下函数
+    //   geocoder.setError(function() {
+    //     alert("出错了，请输入正确的地址！！！");
+    //   });
+    // }
+
+</script>
+<script>
+    var ue = UE.getEditor('content',{
+      initialFrameWidth:'100%',
+      initialFrameHeight:500,
+    });
+
+    //验证表单
+    function validateForm() {
+      var title = $("#title").val();
+      var cover = $("#cover").val();
+      var state = $("input[name='state']:checked").val();
+      var latlng = $("#latlng").val();
+      var address = $("#address").val();
+      var content = ue.getContent();
+      if(title == ""){
+        layer.msg('请输入标题', {icon: 6,time:1500});
+        return false;
+        alert('111');
+      }else if (cover == ""){
+        layer.msg('请选择封面', {icon: 6,time:1500});
+        return false;
+      }else if(latlng == ""){
+        layer.msg('请选取地点', {icon: 6,time:1500});
+        return false;
+      }else if(content == ""){
+        layer.msg('请输入内容', {icon: 6,time:1500});
+        return false;
+      }else {
+        return {title:title,cover:cover,state:state,latlng:latlng,address:address,content:content};
+      }
+    }
+
+    //提交数据
+    function submitForm(){
+      var data = validateForm();
+      if (!data) return;
+      $.ajax({
+        type:'POST',
+        url:"{:url('/scenery/add')}",
+        data:data,
+        success:function (res) {
+          var res = JSON.parse(res);
+          if(res.code === 200){
+            layer.msg(res.msg,{icon:1,time:1000});
+            setTimeout("parent.location.reload();",1500);
+          }else {
+            layer.msg(res.msg,{icon:2,time:1000});
+          }
+        }
+      });
+    };
+</script>
+<script>
+  layui.use('upload', function(){
+
+    var upload = layui.upload;
+    //执行实例
+    var uploadInst = upload.render({
+      elem: '#img', //绑定元素
+      size: 2048,
+      exts:'jpg|png|gif|bmp|jpeg',
+      auto: false,
+      choose:function(obj){
+        //将每次选择的文件追加到文件队列
+        var files = obj.pushFile();
+
+        //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+        obj.preview(function(index, file, result){
+          //console.log(result); //得到文件base64编码，比如图片
+          $("#img-show").attr('src',result);
+          $("input[name='cover']").val(result);
+        });
+      },
+    });
+  });
+</script>
+{/block}

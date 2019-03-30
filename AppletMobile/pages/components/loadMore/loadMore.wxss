@@ -1,0 +1,6 @@
+/* components/loadMore/loadMore.wxss */
+@import '/libs/weui/weui.wxss';
+.weui-loadmore_line {
+  margin-top:2.0em;
+  margin-bottom:-1em;
+}

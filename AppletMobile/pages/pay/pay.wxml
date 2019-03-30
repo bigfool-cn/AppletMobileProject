@@ -1,0 +1,98 @@
+<!--pages/home/home-details/pay.wxml-->
+<wxs src='../../utils/filter.wxs' module='filter' />
+<view>
+    <view class='pay-header'>
+    
+    </view>
+
+    <view class='pay-main'>
+        <view class='main-one' bindtap='selectAddress' >
+            <view class='main-one-left'>
+              <image src='/image/address.png'></image>
+            </view>
+            <view class='main-one-right' wx:if='{{hasAddress}}'>
+              <view class='adse-mobile'>
+                <text>收货人：{{address.addressee}}</text>
+                <text>{{address.mobile}}</text>
+              </view>
+              <view class='address'>
+                收货地址：{{address.address}}{{address.xx_address}}
+                <image src='/image/right.png' class='right-image'></image>
+              </view>
+            </view>
+            <view wx:else class='add-address'>
+              <navigator url="/page/address-add/address-add" hover-class='navigator-hover'>
+                添加新地址
+              </navigator>
+            </view>
+        </view>
+
+        <view class='main-two' wx:for='{{goods}}' wx:key='index'>
+            <image src="{{item.goods_image_url}}" class='main-image'></image>
+            <view class='main-left'>
+              <view class='main-left-top'>
+                <text class='main-title'>{{filter.titleFilter(item.goods_desc,30)}}</text>
+              </view>
+              <view class='main-left-bottom'>
+                <text class='main-price'>￥{{item.goods_sprice}}</text>
+                <text class='main-num'>x{{goodsNumArr[item.goods_id]}}</text>
+              </view>
+            </view>
+        </view>
+    </view>
+
+    <view class='pay-mainTwo'>
+      <view class='mianTwo-one'>
+        <text>配送时间</text>
+      </view>
+
+      <view class='mainTwo-two'>
+          <picker bindchange="select" value='{{index}}' range='{{array}}'>
+              <view class='array'>
+                  <text>{{array[index]}}</text>
+                  <image src='/image/right.png'></image>
+              </view> 
+          </picker>
+      </view>
+    </view> 
+
+
+
+    <view class='pay-mainThree'>
+        <view class='mainThree-one'>
+          <text>留言</text>
+        </view>
+
+        <view class='mainThree-two'>
+          <input placeholder="选填：给商家留言(100字以内)" auto-focus bindinput='userMsg'></input>
+        </view>
+    </view>
+
+
+
+    <view class='pay-mainFive'>
+        <view class='mainFive-one'>
+            <text class='left'>订单金额</text>
+            <text class='right'>￥{{totalSprice}}</text>
+        </view>
+        <view class='mainFive-two'>
+            <text class='left'>运费</text>
+            <text class='right'>￥{{totalExpress}}</text>
+        </view>
+         <view class='mainFive-three'>
+            <text class='left'>实际付款</text>
+            <text class='right'>￥{{totalSprice+totalExpress}}</text>
+        </view> 
+    </view>
+
+  
+    <view class='pay-Bottom' bindtap='pay'>
+        <text>提交订单</text>
+    </view>
+</view>   
+
+<!-- 
+ <view class='pay_main'>
+        
+         </view>
+         -->

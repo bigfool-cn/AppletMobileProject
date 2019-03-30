@@ -1,0 +1,89 @@
+{extend name="base" /}
+{block name="title"}
+<title>添加后台管理员</title>
+{/block}
+{block name="css"}
+<style>
+    .padding-bm10{
+        padding-bottom: 10px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-body">
+    <div id="xform" class="layui-form">
+        <div class="padding-bm10">
+            <span>用户名:</span>
+            <input type="text" name="admin_user_name" id="admin_user_name" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>密码:</span>
+            <input type="password" name="admin_user_pwd" id="admin_user_pwd" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>重新输入密码:</span>
+            <input type="password" name="confirm" id="confirm" placeholder="请再次输入密码" autocomplete="off" class="layui-input">
+        </div>
+        <div class="padding-bm10">
+            <span>激活状态:</span>
+            <div>
+            <input type="radio" name="admin_user_state" value="1" title="启用">
+            <input type="radio" name="admin_user_state" value="0" title="禁用" checked>
+            </div>
+        </div>
+        <button class="layui-btn" onclick="submitForm()">
+            <i class="layui-icon">&#xe608;</i>添加
+        </button>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript">
+  //
+  layui.use('form', function(){
+    var form = layui.form;
+  });
+
+
+  //验证表单
+  function validateForm() {
+    var admin_user_name = $.trim($("#admin_user_name").val());
+    var admin_user_pwd = $.trim($("#admin_user_pwd").val());
+    var confirm = $.trim($("#confirm").val());
+    var admin_user_state = $.trim($("input[name='admin_user_state']:checked").val());
+    if (!admin_user_name){
+      layer.msg('请输入用户名', {icon: 6,time:1500});
+      return false;
+    }else if (!admin_user_pwd){
+      layer.msg('请输入密码', {icon: 6,time:1500});
+      return false;
+    }else if (admin_user_pwd != confirm){
+      layer.msg('两次输入密码不一致', {icon: 6,time:1500});
+      return false;
+    }else {
+      return {admin_user_name:admin_user_name,admin_user_pwd:admin_user_pwd,confirm:confirm,admin_user_state:admin_user_state};
+    }
+  }
+
+  //提交数据
+  function submitForm(){
+    var data = validateForm();
+    if (!data) return;
+    $.ajax({
+      type:'POST',
+      url:"{:url('/adminuser/add')}",
+      data:data,
+      success:function (res) {
+        var res = JSON.parse(res);
+        if(res.code === 200){
+          layer.msg(res.msg,{icon:1,time:1000});
+          setTimeout("parent.location.reload();",1500);
+        }else {
+          layer.msg(res.msg,{icon:2,time:1000});
+        }
+      }
+    });
+  };
+</script>
+
+{/block}

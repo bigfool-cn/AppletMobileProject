@@ -1,0 +1,199 @@
+{extend name="base" /}
+{block name="title"}
+<title>用户列表</title>
+{/block}
+{block name="css"}
+<link rel="stylesheet" src="__STATIC__/zoom/zoom.css">
+<style>
+    .layui-laypage a, .layui-laypage span{
+        height: 35px;
+        line-height: 35px;
+        font-size: 14px;
+    }
+    .layui-laypage-curr{
+        font-size: 14px !important;
+    }
+    .chart-body{
+        display: none;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 1000px;
+        background-color: rgba(226, 226, 225, 0.5);
+        z-index: 5;
+    }
+    .chart{
+        width: 700px;
+        height: 500px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-left: -350px;
+        margin-top: -250px;
+        z-index: 10;
+        background-color: #fff;
+        border: 1px solid #00a0e9;
+        border-radius: 10px;
+    }
+    .close{
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 30px;
+        height: 30px;
+        font-size: 30px;
+        text-align: center;
+        z-index: 10;
+    }
+    .close:hover{
+        cursor: pointer;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="javascript:void(0);">用户管理</a>
+        <a href="javascript:void(0);">用户列表</a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" action="{:url('/user')}">
+            <input class="layui-input" placeholder="开始日" name="start" id="start">
+            <input class="layui-input" placeholder="截止日" name="end" id="end">
+            <button class="layui-btn"  lay-submit="" lay-filter="sreach" style="margin-bottom: 2px;"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$pages->total()} 条</span>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>ID</th>
+            <th>昵称</th>
+            <th>头像</th>
+            <th>性别</th>
+            <th>地区</th>
+            <th>登陆时间</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {volist name="users" id="user"}
+        <tr>
+            <td>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id={$user.user_id}><i class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{$pages->currentPage()*$pages->listRows()-$pages->listRows()+$i}</td>
+            <td>{$user.user_name}</td>
+            <td><img src="{$user.user_avatar}" width="50px" height="35px;" data-action="zoom"></td>
+            <td>{$user.user_gender}</td>
+            <td>{$user.user_address}</td>
+            <td>{$user.login_time | date="Y-m-d H:i:s"}</td>
+            <td class="td-manage">
+                <a title="一周内访问次数统计" onclick="stat(this,{$user.user_id})" href="javascript:;">
+                    <i class="layui-icon">&#xe62c;</i>
+                </a>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    {include file="page" /}
+    <div class="chart-body">
+        <div class="chart" >
+            <div id="echarts" style="width: 700px;height: 500px;">
+            </div>
+            <span class="close"><img src="__STATIC__/images/close.png" width="30px" height="30px"></span>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script src="__STATIC__/zoom/transition.min.js"></script>
+<script src="__STATIC__/zoom/zoom.js"></script>
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts.min.js"></script>
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end', //指定元素
+            type: 'datetime'
+        });
+    });
+
+    //折线图
+    var myChart = echarts.init(document.getElementById('echarts'));
+    // 指定图表的配置项和数据
+    option = {
+        title:{
+          text:'一周内用户访问次数',
+          x: 'center',
+        },
+        tooltip: {
+          formatter: '{c}人\n\n({b})'
+        },
+        xAxis: {
+          type: 'category',
+          data: [],
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          data: [],
+          type: 'line',
+          // 显示数值
+          itemStyle : { normal: {label : {show: true}}}
+        }]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    //点击关闭图标
+    $(".close").on('click',function () {
+      $(".chart-body").css('display','none');
+    })
+    //一周内访问次数统计
+    function stat(obj,user_id){
+      $.ajax({
+        type:'GET',
+        url:"{:url('/user/stat')}?id="+user_id,
+        success:function (res) {
+          res = JSON.parse(res);
+          if(res.code==200){
+            console.log(res.data);
+            myChart.setOption({        //加载数据图表
+              xAxis: {
+                data: eval(res.data.users_day)
+              },
+              series: [{
+                // 根据名字对应到相应的系列
+                data: eval(res.data.users_count)
+              }]
+            });
+            $(".chart-body").css('display','block');
+          }else {
+            layer.msg(res.msg,{icon: 2,time:1000})
+          }
+        }
+      })
+    }
+
+</script>
+<![endif]-->
+{/block}

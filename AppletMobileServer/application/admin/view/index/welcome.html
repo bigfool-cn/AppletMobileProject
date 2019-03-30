@@ -1,0 +1,130 @@
+{extend name="base" /}
+{block} name="title"}
+<title>首页</title>
+{/block}
+{block name="body"}
+<div class="x-body layui-anim layui-anim-up">
+    <fieldset class="layui-elem-field">
+        <legend>数据统计</legend>
+        <div class="layui-field-box">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div class="layui-carousel x-admin-carousel x-admin-backlog" lay-anim="" lay-indicator="inside" lay-arrow="none" style="width: 100%; height: 90px;">
+                            <div carousel-item="">
+                                <ul class="layui-row layui-col-space10 layui-this">
+                                    <li class="layui-col-xs2">
+                                        <a href="javascript:;" class="x-admin-backlog-body">
+                                            <h3>当日活跃会员数</h3>
+                                            <p>
+                                                <cite>{$today_users}</cite></p>
+                                        </a>
+                                    </li>
+                                    <li class="layui-col-xs2">
+                                        <a href="javascript:;" class="x-admin-backlog-body">
+                                            <h3>总会员数</h3>
+                                            <p>
+                                                <cite>{$total_users}</cite></p>
+                                        </a>
+                                    </li>
+                                    <li class="layui-col-xs2">
+                                        <a href="javascript:;" class="x-admin-backlog-body">
+                                            <h3>当日订单数</h3>
+                                            <p>
+                                                <cite>{$today_orders}</cite></p>
+                                        </a>
+                                    </li>
+                                    <li class="layui-col-xs2">
+                                        <a href="javascript:;" class="x-admin-backlog-body">
+                                            <h3>总订单数</h3>
+                                            <p>
+                                                <cite>{$total_orders}</cite></p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="layui-elem-field">
+        <legend>活跃会员折线图</legend>
+        <div class="layui-field-box" id="users" style="height: 400px">
+
+        </div>
+    </fieldset>
+    <fieldset class="layui-elem-field">
+        <legend>订单折线图</legend>
+        <div class="layui-field-box" id="orders" style="height: 400px">
+
+        </div>
+    </fieldset>
+
+</div>
+{/block}
+{block name="js"}
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts.min.js"></script>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var usersChart = echarts.init(document.getElementById('users'));
+
+    // 指定图表的配置项和数据
+    users_option = {
+      title:{
+        text:'用户数',
+        x: 'center',
+      },
+      tooltip: {
+        formatter: '{c}人\n\n({b})'
+      },
+      xAxis: {
+        type: 'category',
+        data: {$users['users_day']|raw},
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        data: {$users['users_count']|raw},
+        type: 'line',
+        // 显示数值
+        itemStyle : { normal: {label : {show: true}}}
+      }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    usersChart.setOption(users_option);
+
+    // 基于准备好的dom，初始化echarts实例
+    var ordersChart = echarts.init(document.getElementById('orders'));
+
+    // 指定图表的配置项和数据
+    orders_option = {
+      title:{
+        text:'订单数',
+        x: 'center',
+      },
+      tooltip: {
+        formatter: '{c}单\n\n({b})'
+      },
+      xAxis: {
+        type: 'category',
+        data: {$orders['orders_day']|raw},
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        data: {$orders['orders_count']|raw},
+        type: 'line',
+        // 显示数值
+        itemStyle : { normal: {label : {show: true}}}
+      }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    ordersChart.setOption(orders_option);
+</script>
+{/block}

@@ -1,0 +1,13 @@
+<!--components/loadMore/loadMore.wxml-->
+<view class="page__bd">
+  <view class="weui-loadmore" wx:if="{{loadMore}}">
+      <view class="weui-loadmore__tips" style='background:#f5f5f5'>加载更多</view>
+  </view>
+  <view class="weui-loadmore" wx:if="{{loading}}">
+      <view class="weui-loading"></view>
+      <view class="weui-loadmore__tips" style='background:#f5f5f5'>正在加载</view>
+  </view>
+  <view class="weui-loadmore weui-loadmore_line" wx:if="{{notData}}">
+      <view class="weui-loadmore__tips weui-loadmore__tips_in-line" style='background:#f5f5f5'>暂无更多数据</view>
+  </view>
+</view>

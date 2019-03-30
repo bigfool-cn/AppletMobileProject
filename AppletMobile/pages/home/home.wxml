@@ -1,0 +1,101 @@
+<import src="home-item/home-item-template.wxml" />
+<wxs src='../../utils/filter.wxs' module='filter' />
+<view id='box'>
+    <view class='box'>
+        <swiper 
+            indicator-dots="Boolean"
+            indicator-color="rgba(0, 0, 0, .3)
+            indicator-active-color="#ebebeb"
+            autoplay="Boolean"
+            circular="Boolean"
+          >
+          <swiper-item wx:for="{{slideShow}}" wx:for-index="idx" wx:for-item="item" 
+            data-goods_id="{{item.goods_id}}" catchtap="clickSlide">
+              <image src="{{item.image_url_320}}"></image>
+          </swiper-item>
+        </swiper>
+    </view>
+
+    <view class='boxTwo'>
+      <text>商品分类</text>
+    </view> 
+    <swiper
+      indicator-dots="{{indicatorDots}}"
+      indicator-color="rgba(0, 0, 0, .1)
+      indicator-active-color="#ee5236"
+      autoplay="{{autoplay}}" 
+      class='goods-cate-swiper'
+    >
+      <block wx:for="{{goodsCates}}" wx:for-item="goodsCate">
+        <swiper-item>
+          <view class='goods-cate'>
+            <view class='goods-cate-item' wx:for="{{goodsCate}}" wx:key="unique" 
+              data-goods_cate_id="{{item.goods_cate_id}}" data-goods_cate_name="{{item.goods_cate_name}}"
+              bindtap='clickGoodsCate'>
+              <text>{{item.goods_cate_name}}</text>
+            </view>
+          </view>
+        </swiper-item>
+      </block>
+    </swiper>
+    
+    <!-- <scroll-view scroll-x class='scroll-view'>
+      <view class='goods-cate'>
+        <view class='goods-cate-item' wx:for="{{15}}" wx:key="unique">
+          <text>手机机</text>
+        </view>
+      </view>
+    </scroll-view> -->
+    <view class='boxTwo'>
+      <text>秒杀商品</text>
+    </view> 
+
+    <view class='goods-skill'>
+    <view class='goods-skill-item' wx:for="{{goodsSkills}}" wx:key='unique' 
+      bindtap='clickGoodsSkill' data-id='{{item.goods_skill_id}}'>
+      <image src='{{item.goods_skill_image_url}}' class='goods_image'></image>
+      <view class='goods-item-right'>
+        <view class='goods_skill_name'>
+          <text>{{filter.titleFilter(item.goods_skill_desc,30)}}</text>
+        </view>
+        <view class='skill-time' wx:if='{{!item.is_end}}'>
+          {{item.skill_time}}
+        </view>
+        <view class='skill-time' wx:else>
+          已结束
+        </view>
+        <view class='goods-item-rb'>
+          <view>
+            <text class='goods-sprice'>¥{{item.goods_skill_sprice}}</text>
+            <text class='goods-price'>{{item.goods_skill_price}}</text>
+          </view>
+          <view class='skill-btn' wx:if='{{!item.is_end}}'>立即抢购</view>
+          <view class='skill-btn' style='background:#d9d9d9' wx:else>已结束</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+    <view class='boxTwo'>
+        <text>热销商品</text>
+    </view> 
+
+    <view>
+      <block wx:for="{{goodsHots}}" wx:for-item="item" class="left"  wx:for-index="idx">
+          <view catchtap='btn' data-id="{{item.goods_id}}"> 
+            <view class='main_boxtwo'>
+                <image class='main-image' src="{{item.goods_image_url}}"></image>
+                <view class='box'>
+                    <text class='main-title'>{{item.goods_name}}</text>
+                    <text class='main-titleTwo'>{{filter.titleFilter(item.goods_desc,15)}}</text>
+                    <text class='main-price'>￥{{item.goods_sprice}}</text>
+                </view>
+            </view>
+          </view>
+      </block>
+    </view>
+  
+</view>
+
+
+

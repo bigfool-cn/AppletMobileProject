@@ -1,0 +1,55 @@
+<import src="../../wxParse/wxParse.wxml"/>
+<view id='box'>
+  <swiper 
+      indicator-dots="Boolean"
+      indicator-color="#ebebeb"
+      indicator-active-color="rgba(0, 0, 0, .3)"
+      autoplay="Boolean"
+      circular="Boolean"
+  >
+    <swiper-item wx:for="{{goodsSwipers}}" wx:for-item="item" wx:for-index="idx">
+      <image src="{{item}}" class="slide-image" />
+    </swiper-item>
+  </swiper>
+
+  <view class='box'>
+    <view class='box-item'>
+      <text class='price'>¥{{goods.goods_sprice}}</text>
+      <text class='msales'>月销: {{goods.goods_stock}}</text>
+      
+    </view>
+    <text class='title'>{{goods.goods_name}}</text>
+    <view class='box-item'>
+      <text class='expressage'>快递: {{goods.goods_express}}</text>
+      <text class='stock'>库存: {{goods.goods_stock}}</text>
+    </view>
+  </view>
+
+  <view class='boxtwo'>
+    <view class="boxtwo-tab-nav {{selectIndex == 0 ?'on':''}}" bindtap="boxtwo" data-index="0">商品详情</view>
+    <view class="boxtwo-tab-nav {{selectIndex == 1 ?'on':''}}" bindtap="boxtwo" data-index="1">产品参数
+   </view>
+
+      <view class="boxtwo-content"  class='img_one'>
+          <view wx:if="{{selectIndex == 0}}" >
+              <template is="wxParse" data="{{wxParseData:goodsDetail.nodes}}"/>
+          </view>
+          <view wx:if="{{selectIndex == 1}}" class='product'>
+            <template is="wxParse" data="{{wxParseData:goodsParam.nodes}}"/>
+          </view>
+      </view>
+  </view>
+
+  <view class='dibu'>
+    <view class='left' wx:if='{{goods.goods_stock > 0}}'>
+        <text class='text' bindtap="addcart" data-id="{{goods.goods_id}}"  data-title="{{goods.goods_name}}"
+          data-price="{{goods.goods_sprice}}" data-image="{{goods.goods_image_urls[0]}}" >加入购物车</text>
+    </view>
+    <view class='right' wx:if='{{goods.goods_stock > 0}}'>
+        <text class='text' bindtap="goPay" data-id="{{goods.goods_id}}">立即购买</text>
+    </view>
+    <view class='bottom' wx:else>
+        <text class='text'>商品库存不足</text>
+    </view>
+  </view>
+</view>

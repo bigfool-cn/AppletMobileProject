@@ -1,0 +1,36 @@
+/* pages/my-address/my-address.wxss */
+page{
+  background: #fff;
+}
+.address-item{
+  padding: 15rpx;
+  font-size: 30rpx;
+  color: #949494;
+  border-top: 1rpx #d9d9d9 solid;
+}
+.address-name-mobile{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between
+}
+.address-action{
+  height: 50rpx;
+  
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.icon > text{
+  vertical-align: middle;
+}
+.address-edit{
+  align-self: flex-end;
+  display: flex;
+  flex-direction: row;
+}
+.address-edit image{
+  vertical-align: bottom;
+  width: 50rpx;
+  height: 50rpx;
+}

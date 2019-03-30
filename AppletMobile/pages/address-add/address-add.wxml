@@ -1,0 +1,49 @@
+<form bindsubmit="bindFormSubmit">
+  <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+          <view class="weui-label">收货人</view>
+      </view>
+      <view class="weui-cell__bd">
+          <input class="weui-input" auto-focus name="user"/>
+      </view>
+  </view>
+  <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+          <view class="weui-label">联系电话</view>
+      </view>
+      <view class="weui-cell__bd">
+        <input class="weui-input" name="mobile" />
+      </view>
+  </view>
+  <view class="weui-cell weui-cell_select">
+      <view class="weui-cell__hd weui-cell__hd_in-select-after">
+          <view class="weui-label">所在地区</view>
+      </view>
+      <view class="weui-cell__bd">
+          <picker class="placeholder" mode="multiSelector" 
+            bindchange="changeCitysChange" 
+            bindcolumnchange="changeCitysChangeColumn" 
+            value="{{ citysIndex }}" range="{{ cityArray }}">
+          <view class="weui-select weui-select_in-select-after">{{ssq}}</view>
+          <input name="address" value='{{ssq}}' hidden />
+        </picker>
+      </view>
+  </view>
+  <view class="weui-cell">
+      <view class="weui-cell__bd">
+          <textarea class="weui-textarea" name="xiangxi" placeholder="详细地址" style="height: 3.3em" />
+      </view>
+  </view>
+  <view class="weui-cell weui-cell_select select-mr" bindtap='checkMr'>
+      <view class="weui-cell__hd weui-cell__hd_in-select-after">
+          <view class="weui-label">设为默认地址</view>
+      </view>
+      <view class="weui-cell__bd">
+          <radio value="true"  checked="{{isCheck}}" style='float:right;margin-bottom:6rpx;'/>
+          <input name="moren" value='{{isCheck}}' hidden/>
+      </view>
+  </view>
+  <view style='padding:30rpx 100rpx 15rpx 100rpx;'>
+      <button form-type="submit" type='warn' size='default' bindtap='submitAddress'>保存</button>
+  </view>
+</form>

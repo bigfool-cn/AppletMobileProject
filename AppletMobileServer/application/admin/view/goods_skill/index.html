@@ -1,0 +1,165 @@
+{extend name="base" /}
+{block name="title"}
+<title>秒杀商品列表</title>
+{/block}
+{block name="css"}
+<style>
+    .layui-laypage a, .layui-laypage span{
+        height: 35px;
+        line-height: 35px;
+        font-size: 14px;
+    }
+    .layui-laypage-curr{
+        font-size: 14px !important;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="javascript:void(0);">商城管理</a>
+        <a href="javascript:void(0);">秒杀商品列表</a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" action="">
+            <input class="layui-input" placeholder="秒杀商品名称" name="goods_skill_name" value="{$goods_skill_name}" id="goods_skill_name">
+            <button class="layui-btn"  lay-submit="" lay-filter="sreach" style="margin-bottom: 2px;"><i class="layui-icon">&#xe615;</i></button>
+            <button type="button" class="layui-btn" style="margin-bottom: 2px;background: #ffc83c;" onclick="resetForm()">
+                <i class="layui-icon">&#xe669;</i>
+            </button>
+        </form>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量</button>
+        <button class="layui-btn" id="goods_skills_add"><i class="layui-icon"></i>添加</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$pages->total()} 条</span>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>商品分类</th>
+            <th>商品名称</th>
+            <th>商品描述</th>
+            <th>商品定价</th>
+            <th>商品秒杀价</th>
+            <th>商品库存</th>
+            <th>快递费</th>
+            <th>秒杀时间</th>
+            <th>是否结束</th>
+            <th>创建时间</th>
+            <th>更新时间</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {volist name="goodsSkill" id="goods_skill"}
+        <tr>
+            <td>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id={$goods_skill.goods_skill_id}><i class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{$goods_skill.goods_cate_name}</td>
+            <td>{$goods_skill.goods_skill_name}</td>
+            <td>{$goods_skill.goods_skill_desc | mb_substr=0,16}...</td>
+            <td>{$goods_skill.goods_skill_price}</td>
+            <td>{$goods_skill.goods_skill_sprice}</td>
+            <td>{$goods_skill.goods_skill_stock}</td>
+            <td>{$goods_skill.goods_skill_express}</td>
+            <td>{$goods_skill.goods_skill_time}</td>
+            <td>{$goods_skill.is_end?"已结束":"未结束"}</td>
+            <td>{$goods_skill.create_time | date="Y-m-d H:i:s"}</td>
+            <td>{$goods_skill.update_time | date="Y-m-d H:i:s"}</td>
+            <td class="td-manage">
+                <a title="编辑" onclick='x_admin_show("修改后台栏目","/goodsskill/update?id={$goods_skill.goods_skill_id}")' href="javascript:;">
+                    <i class="layui-icon">&#xe642;</i>
+                </a>
+                <a title="删除" onclick="delOne(this,{$goods_skill.goods_skill_id})" href="javascript:;">
+                    <i class="layui-icon">&#xe640;</i>
+                </a>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    {include file="page" /}
+</div>
+{/block}
+{block name="js"}
+<script>
+    function resetForm()
+    {
+        $('.layui-input').attr("value","");
+    }
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end', //指定元素
+            type: 'datetime'
+        });
+    });
+
+    //点击添加小程序栏目
+    $("#goods_skills_add").on('click',function () {
+      x_admin_show('添加秒杀商品','/goodsskill/add');
+    })
+
+    /*单个删除*/
+    function delOne(obj,id){
+      layer.confirm('确认要删除吗？',function(index){
+        //发异步删除数据
+        $.ajax({
+          url: "{:url('/goodsskill/delete')}?ids=" + id,
+          type: 'GET',
+          success:function (res) {
+            var res = JSON.parse(res);
+            if(res.code === 200){
+              //捉到所有被选中的，发异步进行删除
+              layer.msg(res.msg,{icon:1,time:1000});
+              setTimeout("location.reload();",1000);
+              //$(obj).parents("tr").remove();
+            }else {
+              layer.msg(res.msg, {icon: 1,time:1000});
+            }
+          }
+        });
+      });
+    }
+
+    //批量删除
+    function delAll (argument) {
+      var data = tableCheck.getData();
+      layer.confirm('确认要删除吗？',function(index){
+        $.ajax({
+          url: "{:url('/goodsskill/delete')}?ids=" + data,
+          type: 'GET',
+          success:function (res) {
+            var res = JSON.parse(res);
+            console.log(res);
+            if(res.code === 200){
+              //捉到所有被选中的，发异步进行删除
+              layer.msg(res.msg, {icon: 1,time:1000});
+              setTimeout("location.reload();",1000);
+              //$(".layui-form-checked").not('.header').parents('tr').remove();
+            }else {
+              layer.msg(res.msg, {icon: 1,time:1000});
+            }
+          }
+        });
+      });
+    }
+</script>
+<![endif]-->
+{/block}
