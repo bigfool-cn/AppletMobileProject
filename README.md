@@ -6,11 +6,11 @@
 * Redis 3.0 
 * 腾讯云cos/数据万象/CDN 
 
-
+### 初始登录账户：admin  密码：appletmobile
 ### AppletMobile目录是小程序源代码
 ### AppletMobileServer目录是小程序对应的后台源码  
 
-### 小程序模块完成模块有有
+### 小程序模块完成模块有
 * 首页轮博图商品
 * 商品分类
 * 秒杀商品
