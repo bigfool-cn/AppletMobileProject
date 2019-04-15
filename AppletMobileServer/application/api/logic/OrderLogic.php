@@ -57,9 +57,8 @@ class OrderLogic
             return ['code'=>2003,'msg'=>'抢购资格已用完!'];
         }
         $key = 'goods_skill_'.$id;
-        $len = $redis->llen($key);
-        if($len > 0){
-            $redis->rpop($key);
+        $len = $redis->rpop($key);
+        if(!$len){
             $redis->sadd($pp_key,$user_id);
             return ['code'=>200,'msg'=>'抢购成功'];
         }else{
